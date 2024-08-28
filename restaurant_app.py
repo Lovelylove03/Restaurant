@@ -45,7 +45,7 @@ def fetch_restaurant_data(term, location, price_range, sort_by='rating', limit=5
 @st.cache_data
 def load_data():
     # Dummy data example - replace with your actual dataset loading logic
-    file_path = 'https://raw.githubusercontent.com/Lovelylove03/Gourmet-Restaurant/main/datamission.csv'  
+    file_path = 'https://raw.githubusercontent.com/Lovelylove03/Restaurant/main/df_mich.csv'  
     data = pd.read_csv(file_path)
     return data
 
