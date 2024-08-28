@@ -55,7 +55,7 @@ def load_data():
 
 def main():
     # Set background image
-    set_background_image('https://cdn.pixabay.com/photo/2018/06/14/13/35/restaurant-3489374_1280.jpg')  # Corrected image URL
+    set_background_image('https://github.com/Lovelylove03/Restaurant/blob/main/restaurant-3489374_1280.jpg')  # Corrected image URL
     
     st.title("Gourmet Restaurant Recommendation System")
 
