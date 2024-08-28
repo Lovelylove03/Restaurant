@@ -73,19 +73,38 @@ def main():
     min_price = st.sidebar.number_input("Minimum Price", min_value=0, value=10)
     max_price = st.sidebar.number_input("Maximum Price", min_value=0, value=100)
 
+    # Award Selection (Unique Awards)
+    unique_awards = data['Award'].dropna().unique()
+    selected_award = st.sidebar.selectbox("Choose Award", sorted(unique_awards))
+
     # Fetch Recommendations on Button Click
     if st.sidebar.button("Get Recommendations"):
-        st.write(f"Showing restaurants in {town}, {country} with cuisine type '{cuisine_preference}' within price range {min_price} - {max_price}.")
+        st.write(f"Showing restaurants in {town}, {country} with cuisine type '{cuisine_preference}', award '{selected_award}', within price range {min_price} - {max_price}.")
 
         # Fetching restaurant data
         data = fetch_restaurant_data(term=cuisine_preference, location=town, price_range='1,2,3,4', limit=5)
         if 'businesses' in data:
             businesses = data['businesses']
-            for business in businesses:
-                st.subheader(business['name'])
-                st.write(f"Rating: {business['rating']}")
-                st.write(f"Address: {', '.join(business['location']['display_address'])}")
-                st.write(f"Phone: {business.get('display_phone', 'N/A')}")
-                if business.get('photos'):
-                    st.image(business['photos'][0])
-                st.write(f"Price: {business.get('price', 'N/A')}")
+            
+            # Filter results by selected award
+            filtered_businesses = [business for business in businesses if business.get('awards') == selected_award]
+
+            if filtered_businesses:
+                for business in filtered_businesses:
+                    st.subheader(business['name'])
+                    st.write(f"Rating: {business['rating']}")
+                    st.write(f"Address: {', '.join(business['location']['display_address'])}")
+                    st.write(f"Phone: {business.get('display_phone', 'N/A')}")
+                    if business.get('photos'):
+                        st.image(business['photos'][0])
+                    st.write(f"Price: {business.get('price', 'N/A')}")
+                    st.write(f"Award: {business.get('awards', 'N/A')}")
+                    st.write(f"URL: {business.get('url', 'N/A')}")
+                    st.write("\n")
+            else:
+                st.write("No results found with the selected award.")
+        else:
+            st.write("No results found.")
+    
+if __name__ == '__main__':
+    main()
