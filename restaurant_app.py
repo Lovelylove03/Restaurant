@@ -6,7 +6,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Replace with your Yelp API key or any other relevant API
 YELP_API_KEY = 'QqpMmw2tuGPpmPbikkghpkgZFvxfdetl3NPhp6THcPA8NcuRRDBmD8sY-QAqxdjD-Fe4KAOwvhkVp7xFmG2jbFiND-amRCkloLeHOn9ncLlHQdNHBKx10xd2AiPPZnYx' 
-YELP_API_URL = 'https://api.yelp.com/v3/businesses/search'  # Corrected to use the Yelp API endpoint
+YELP_API_URL = 'https://api.yelp.com/v3/businesses/search'  #  to use the Yelp API endpoint
 
 # Custom CSS for background image
 def set_background_image(image_url):
