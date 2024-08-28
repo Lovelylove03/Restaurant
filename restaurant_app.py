@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 import requests
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Replace with your Yelp API key or any other relevant API
 YELP_API_KEY = 'QqpMmw2tuGPpmPbikkghpkgZFvxfdetl3NPhp6THcPA8NcuRRDBmD8sY-QAqxdjD-Fe4KAOwvhkVp7xFmG2jbFiND-amRCkloLeHOn9ncLlHQdNHBKx10xd2AiPPZnYx'
@@ -16,6 +14,7 @@ def set_background_image(image_url):
         .stApp {{
             background-image: url("{image_url}");
             background-size: cover;
+            background-attachment: fixed;
         }}
         </style>
         """,
@@ -35,6 +34,11 @@ def fetch_restaurant_data(term, location, price_range, sort_by='rating', limit=5
         'limit': limit
     }
     response = requests.get(YELP_API_URL, headers=headers, params=params)
+    
+    # Debugging: Print the response content
+    st.write("API Response Status Code:", response.status_code)
+    st.write("API Response Content:", response.json())
+    
     if response.status_code == 200:
         return response.json()
     else:
@@ -44,7 +48,7 @@ def fetch_restaurant_data(term, location, price_range, sort_by='rating', limit=5
 # Load and preprocess data
 @st.cache_data
 def load_data():
-    # Dummy data example - replace with your actual dataset loading logic
+    # Load dataset from URL
     file_path = 'https://raw.githubusercontent.com/Lovelylove03/Restaurant/main/df_mich.csv'  
     data = pd.read_csv(file_path)
     return data
@@ -98,8 +102,12 @@ def main():
 
         # Fetching restaurant data
         data = fetch_restaurant_data(term=cuisine_preference, location=f"{town}, {country}", price_range=yelp_price, limit=5)
+        
         if 'businesses' in data:
             businesses = data['businesses']
+            
+            # Debugging: Print fetched businesses
+            st.write("Fetched Businesses:", businesses)
             
             # Filter results by selected award
             filtered_businesses = [business for business in businesses if selected_award in [cat['title'] for cat in business.get('categories', [])]]
