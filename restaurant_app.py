@@ -5,8 +5,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Replace with your Yelp API key or any other relevant API
-YELP_API_KEY = 'YOUR_YELP_API_KEY'
-YELP_API_URL = 'https://api.yelp.com/v3/businesses/search'
+YELP_API_URL = 'https://www.yelp.com/search?find_desc=Restaurants&find_loc=Nantes%2C+France'
 
 # Custom CSS for background image
 def set_background_image(image_url):
@@ -14,7 +13,7 @@ def set_background_image(image_url):
         f"""
         <style>
         .stApp {{
-            background-image: url("{image_url}");
+            background-image: url("{restaurant-3489374_1280.jpg}");
             background-size: cover;
         }}
         </style>
