@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import requests
 
-# Replace with your Yelp API key or any other relevant API
+# Replace with your Yelp API key
 YELP_API_KEY = 'QqpMmw2tuGPpmPbikkghpkgZFvxfdetl3NPhp6THcPA8NcuRRDBmD8sY-QAqxdjD-Fe4KAOwvhkVp7xFmG2jbFiND-amRCkloLeHOn9ncLlHQdNHBKx10xd2AiPPZnYx'
 YELP_API_URL = 'https://api.yelp.com/v3/businesses/search'  # Correct Yelp API endpoint
 
@@ -55,7 +55,7 @@ def load_data():
 
 def main():
     # Set background image
-    set_background_image('https://cdn.pixabay.com/photo/2018/06/14/13/35/restaurant-3489374_1280.jpg')  # Corrected image URL
+    set_background_image('https://cdn.pixabay.com/photo/2018/06/14/13/35/restaurant-3489374_1280.jpg')
     
     st.title("Gourmet Restaurant Recommendation System")
 
@@ -77,14 +77,15 @@ def main():
     
     # Price Range Selection
     price_options = {
-        '€€€€': 1079, '€€': 743, '€€€': 449, '¥¥¥': 260, '$$': 210,
-        '$$$$': 180, '¥¥¥¥': 163, '$': 129, '££££': 128, '¥¥': 114,
-        '££': 107, '$$$': 94, '¥': 92, '€': 89, '₩': 65,
-        '£££': 54, '฿฿': 52, '₫': 49, '฿': 37, '₩₩₩₩': 24,
-        '฿฿฿฿': 21, '฿฿฿': 14, '₫₫': 11, '₩₩': 9, '₩₩₩': 8,
-        '₫₫₫₫': 5, '£': 3, '₺₺₺₺': 1
+        '€€€€': '1,2,3,4', '€€': '2', '€€€': '3', '¥¥¥': '3', '$$': '2',
+        '$$$$': '4', '¥¥¥¥': '4', '$': '1', '££££': '4', '¥¥': '2',
+        '££': '2', '$$$': '3', '¥': '1', '€': '2', '₩': '2',
+        '£££': '3', '฿฿': '2', '₫': '1', '฿': '1', '₩₩₩₩': '4',
+        '฿฿฿฿': '4', '฿฿฿': '3', '₫₫': '2', '₩₩': '2', '₩₩₩': '3',
+        '₫₫₫₫': '4', '£': '2', '₺₺₺₺': '4'
     }
     selected_price = st.sidebar.selectbox("Choose Price Range", list(price_options.keys()))
+    yelp_price = price_options.get(selected_price, '1,2,3,4')
 
     # Award Selection (Unique Awards)
     unique_awards = data['Award'].dropna().unique()
@@ -93,12 +94,6 @@ def main():
     # Fetch Recommendations on Button Click
     if st.sidebar.button("Get Recommendations"):
         st.write(f"Showing restaurants in {town}, {country} with cuisine type '{cuisine_preference}', award '{selected_award}', and price range '{selected_price}'.")
-
-        # Convert selected price to Yelp price parameter format
-        price_mapping = {
-            '$': '1', '$$': '2', '$$$': '3', '$$$$': '4'
-        }
-        yelp_price = price_mapping.get(selected_price[0], '1,2,3,4')
 
         # Fetching restaurant data
         data = fetch_restaurant_data(term=cuisine_preference, location=f"{town}, {country}", price_range=yelp_price, limit=5)
@@ -109,7 +104,7 @@ def main():
             # Debugging: Print fetched businesses
             st.write("Fetched Businesses:", businesses)
             
-            # Filter results by selected award
+            # Filter results by selected award (Check business categories and awards)
             filtered_businesses = [business for business in businesses if any(category['title'] == selected_award for category in business.get('categories', []))]
 
             if filtered_businesses:
@@ -118,8 +113,8 @@ def main():
                     st.write(f"Rating: {business['rating']}")
                     st.write(f"Address: {', '.join(business['location']['display_address'])}")
                     st.write(f"Phone: {business.get('display_phone', 'N/A')}")
-                    if business.get('photos'):
-                        st.image(business['photos'][0])
+                    if business.get('image_url'):
+                        st.image(business['image_url'], use_column_width=True)
                     st.write(f"Price: {business.get('price', 'N/A')}")
                     # Make URL clickable
                     st.markdown(f"[Visit Yelp Page]({business.get('url', 'N/A')})", unsafe_allow_html=True)
