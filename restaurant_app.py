@@ -5,7 +5,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Replace with your Yelp API key or any other relevant API
-YELP_API_URL = 'https://www.yelp.com/search?find_desc=Restaurants&find_loc=Nantes%2C+France'
+YELP_API_KEY = 'QqpMmw2tuGPpmPbikkghpkgZFvxfdetl3NPhp6THcPA8NcuRRDBmD8sY-QAqxdjD-Fe4KAOwvhkVp7xFmG2jbFiND-amRCkloLeHOn9ncLlHQdNHBKx10xd2AiPPZnYx' 
+YELP_API_URL = 'https://api.yelp.com/v3/businesses/search'  # Corrected to use the Yelp API endpoint
 
 # Custom CSS for background image
 def set_background_image(image_url):
@@ -13,7 +14,7 @@ def set_background_image(image_url):
         f"""
         <style>
         .stApp {{
-            background-image: url("{restaurant-3489374_1280.jpg}");
+            background-image: url("{image_url}");
             background-size: cover;
         }}
         </style>
@@ -50,7 +51,7 @@ def load_data():
 
 def main():
     # Set background image
-    set_background_image('restaurant-3489374_1280.jpg')  
+    set_background_image('https://cdn.pixabay.com/photo/2018/06/14/13/35/restaurant-3489374_1280.jpg')  # Corrected image URL
     
     st.title("Gourmet Restaurant Recommendation System")
 
@@ -86,7 +87,7 @@ def main():
             businesses = data['businesses']
             
             # Filter results by selected award
-            filtered_businesses = [business for business in businesses if business.get('awards') == selected_award]
+            filtered_businesses = [business for business in businesses if selected_award in business.get('categories', [])]
 
             if filtered_businesses:
                 for business in filtered_businesses:
@@ -97,7 +98,6 @@ def main():
                     if business.get('photos'):
                         st.image(business['photos'][0])
                     st.write(f"Price: {business.get('price', 'N/A')}")
-                    st.write(f"Award: {business.get('awards', 'N/A')}")
                     st.write(f"URL: {business.get('url', 'N/A')}")
                     st.write("\n")
             else:
