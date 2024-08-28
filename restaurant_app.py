@@ -50,7 +50,7 @@ def load_data():
 
 def main():
     # Set background image
-    set_background_image('https://images.unsplash.com/photo-1542281286-9e0a16bb7366')  # Replace with your own image URL
+    set_background_image('restaurant-3489374_1280.jpg')  
     
     st.title("Gourmet Restaurant Recommendation System")
 
@@ -58,7 +58,7 @@ def main():
     data = load_data()
 
     # Sidebar Inputs
-    st.sidebar.header('Customize Your Search')
+    st.sidebar.header('Your Search')
 
     # Country Selection
     country = st.sidebar.selectbox("Choose Country", sorted(data['Country'].unique()))
