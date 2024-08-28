@@ -5,8 +5,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Replace with your Yelp API key or any other relevant API
-YELP_API_KEY = 'QqpMmw2tuGPpmPbikkghpkgZFvxfdetl3NPhp6THcPA8NcuRRDBmD8sY-QAqxdjD-Fe4KAOwvhkVp7xFmG2jbFiND-amRCkloLeHOn9ncLlHQdNHBKx10xd2AiPPZnYx' 
-YELP_API_URL = 'https://api.yelp.com/v3/businesses/search'  #  to use the Yelp API endpoint
+YELP_API_KEY = 'YOUR_YELP_API_KEY'
+YELP_API_URL = 'https://api.yelp.com/v3/businesses/search'  # Correct Yelp API endpoint
 
 # Custom CSS for background image
 def set_background_image(image_url):
@@ -70,8 +70,17 @@ def main():
 
     # Cuisine and Price Range Inputs
     cuisine_preference = st.sidebar.selectbox("Choose Cuisine Type", data['Cuisine'].unique())
-    min_price = st.sidebar.number_input("Minimum Price", min_value=0, value=10)
-    max_price = st.sidebar.number_input("Maximum Price", min_value=0, value=100)
+    
+    # Price Range Selection
+    price_options = {
+        '€€€€': 1079, '€€': 743, '€€€': 449, '¥¥¥': 260, '$$': 210,
+        '$$$$': 180, '¥¥¥¥': 163, '$': 129, '££££': 128, '¥¥': 114,
+        '££': 107, '$$$': 94, '¥': 92, '€': 89, '₩': 65,
+        '£££': 54, '฿฿': 52, '₫': 49, '฿': 37, '₩₩₩₩': 24,
+        '฿฿฿฿': 21, '฿฿฿': 14, '₫₫': 11, '₩₩': 9, '₩₩₩': 8,
+        '₫₫₫₫': 5, '£': 3, '₺₺₺₺': 1
+    }
+    selected_price = st.sidebar.selectbox("Choose Price Range", list(price_options.keys()))
 
     # Award Selection (Unique Awards)
     unique_awards = data['Award'].dropna().unique()
@@ -79,15 +88,21 @@ def main():
 
     # Fetch Recommendations on Button Click
     if st.sidebar.button("Get Recommendations"):
-        st.write(f"Showing restaurants in {town}, {country} with cuisine type '{cuisine_preference}', award '{selected_award}', within price range {min_price} - {max_price}.")
+        st.write(f"Showing restaurants in {town}, {country} with cuisine type '{cuisine_preference}', award '{selected_award}', and price range '{selected_price}'.")
+
+        # Convert selected price to Yelp price parameter format
+        price_mapping = {
+            '$': '1', '$$': '2', '$$$': '3', '$$$$': '4'
+        }
+        yelp_price = price_mapping.get(selected_price[0], '1,2,3,4')
 
         # Fetching restaurant data
-        data = fetch_restaurant_data(term=cuisine_preference, location=town, price_range='1,2,3,4', limit=5)
+        data = fetch_restaurant_data(term=cuisine_preference, location=f"{town}, {country}", price_range=yelp_price, limit=5)
         if 'businesses' in data:
             businesses = data['businesses']
             
             # Filter results by selected award
-            filtered_businesses = [business for business in businesses if selected_award in business.get('categories', [])]
+            filtered_businesses = [business for business in businesses if selected_award in [cat['title'] for cat in business.get('categories', [])]]
 
             if filtered_businesses:
                 for business in filtered_businesses:
